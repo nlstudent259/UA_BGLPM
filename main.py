@@ -38,9 +38,9 @@ def main(Train = False, modelEv = False):
     valid_loader, _ = load_data('Data/Ohio_ValidSet.csv', window_size, step_size, batch_size, norm_param)
     test_loader, _ = load_data('Data/Ohio_TestSet.csv', window_size, step_size, batch_size, norm_param)
 
-    if modelEv:        
+    if modelEv: # Separately implemeted Evidential learning     
         model = EvidentialGRU(input_dim=1, hidden_dim=100).to(device)
-    else:
+    else: # Bayesian NN
         model = BayesianNN(input_dim=1, hidden_dim=hidden_dim, output_dim=1, dropout=0.3, mc_dropout=True).to(device) # Enable MC dropout   
     
     print(model)
@@ -51,7 +51,7 @@ def main(Train = False, modelEv = False):
         model.load_state_dict(torch.load(model_path)) 
     
         # Evaluate 
-        if modelEv:
+        if modelEv: # For evidential learning
             results = evaluate_ev(model, test_loader, device,norm_param)
         else:    
             results = evaluate(model, test_loader, device,norm_param, num_samples=200) # MC samples
